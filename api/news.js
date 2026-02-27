@@ -1,62 +1,43 @@
-export const config = { runtime: 'edge' };
+// ... keep your CORS and setup code the same ...
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+try {
+  const { query } = await req.json();
 
-export default async function handler(req) {
-  // CORS headers
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
+  const prompt = `Search the web for the 4 most recent news articles about: ${query}
+  Respond with ONLY a raw JSON array: [{"title":"Title","url":"URL","source":"Source","date":"YYYY-MM-DD"}]`;
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: corsHeaders });
+  // 1. Initial request to Claude
+  let response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1000,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      // Use 'tool_choice' to force Claude to actually use the search tool
+      tool_choice: { type: 'tool', name: 'web_search' }, 
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  });
+
+  let data = await response.json();
+
+  // 2. CHECK: If Claude wants to use the tool, we need to let the built-in search run
+  // Note: On Vercel Edge with Anthropic's native web_search, 
+  // you often need to check the 'stop_reason'
+  
+  if (data.stop_reason === 'tool_use') {
+    // In the latest Anthropic API, for native tools, 
+    // you may need to send a second request or ensure the first one 
+    // is configured to "execute and return".
+    // A simpler fix for this specific dashboard:
+    // Change the prompt to NOT use the tool if the tool loop is too complex for your current setup.
   }
 
-  try {
-    const { query } = await req.json();
-
-    const prompt = `Search the web for the 4 most recent news articles about: ${query}
-
-Respond with ONLY a raw JSON array, no explanation, no markdown, no backticks:
-[{"title":"Article title","url":"https://...","source":"Publication Name","date":"2026-02-24"}]
-
-If no articles found, return: []`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-
-    const data = await response.json();
-    const textBlock = (data.content || []).find(b => b.type === 'text');
-
-    if (!textBlock) {
-      return new Response(JSON.stringify([]), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-
-    let text = textBlock.text.trim().replace(/```json|```/g, '').trim();
-    const match = text.match(/\[[\s\S]*\]/);
-    const items = match ? JSON.parse(match[0]) : [];
-
-    return new Response(JSON.stringify(items), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-
-  } catch (e) {
-    return new Response(JSON.stringify([]), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-}
+  const textBlock = (data.content || []).find(b => b.type === 'text');
+  
+  // ... rest of your parsing logic ...
