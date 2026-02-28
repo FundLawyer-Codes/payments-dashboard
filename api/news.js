@@ -10,11 +10,10 @@ const corsHeaders = {
 
 export default async function handler(req, res) {
   Object.entries(corsHeaders).forEach(([k, v]) => res.setHeader(k, v));
-
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    const { query } = req.body;
+    const { query, label } = req.body;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -25,44 +24,44 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
+        max_tokens: 2000,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
         tool_choice: { type: 'any' },
         messages: [{
           role: 'user',
-          content: `Do a web search for: ${query}
+          content: `You are a research assistant helping an in-house lawyer at a cross-border payments company focused on China inbound/outbound corridors.
 
-After searching, give me the 4 most relevant results as a JSON array only.
-No explanation. No markdown. Just the raw JSON array like this:
-[{"title":"Title here","url":"https://example.com","source":"Source Name","date":"2026-02-28"}]
+Find the 4 most recent and relevant news articles for the section: "${label}"
+Search for: ${query}
 
-Use today's date if the article date is unclear. Always return at least 1 result if anything relevant exists.`
+- Search multiple times if needed to find good results
+- Prioritize Bloomberg, Reuters, regulatory agency websites, and payments industry publications
+- Focus on: regulatory changes, enforcement actions, policy updates, industry developments
+- Articles should be from the last 60 days where possible
+- Return ONLY a raw JSON array, no markdown, no explanation:
+
+[{"title":"Article title","url":"https://...","source":"Bloomberg / Reuters / etc","date":"YYYY-MM-DD"}]
+
+If nothing relevant found after searching, return: []`
         }],
       }),
     });
 
     const data = await response.json();
-
-    // Log for debugging
-    console.log('API response status:', data.type, 'content blocks:', data.content?.length);
+    console.log(`[${label}] blocks:`, data.content?.map(b => b.type).join(','), 'error:', data.error?.message);
 
     const textBlock = (data.content || []).find(b => b.type === 'text');
-
-    if (!textBlock) {
-      console.log('No text block found. Full response:', JSON.stringify(data).slice(0, 500));
-      return res.status(200).json([]);
-    }
-
-    console.log('Text block:', textBlock.text.slice(0, 200));
+    if (!textBlock) return res.status(200).json([]);
 
     let text = textBlock.text.trim().replace(/```json|```/g, '').trim();
     const match = text.match(/\[[\s\S]*\]/);
     const items = match ? JSON.parse(match[0]) : [];
+    console.log(`[${label}] found ${items.length} items`);
 
     return res.status(200).json(items);
 
   } catch (e) {
-    console.error('Handler error:', e.message);
+    console.error('Error:', e.message);
     return res.status(200).json([]);
   }
 }

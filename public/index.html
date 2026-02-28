@@ -285,24 +285,16 @@
 
 <script>
 const TOPICS = [
-  { id:'pub1',    category:'pub',    label:'Payments Dive',      query:'payments industry news February 2026' },
-  { id:'pub2',    category:'pub',    label:'American Banker',    query:'banking payments regulation news February 2026' },
-  { id:'pub3',    category:'pub',    label:'The Paypers',        query:'fintech cross-border payments news February 2026' },
-  { id:'pub4',    category:'pub',    label:'a16z Fintech',       query:'fintech venture capital trends February 2026' },
-  { id:'pub5',    category:'pub',    label:'Federal Reserve',    query:'Federal Reserve payments policy February 2026' },
-  { id:'pub6',    category:'pub',    label:'CFPB',               query:'CFPB consumer finance enforcement February 2026' },
-  { id:'pub7',    category:'pub',    label:'FinCEN',             query:'FinCEN anti-money laundering enforcement February 2026' },
-  { id:'pub8',    category:'pub',    label:'OCC',                query:'OCC bank regulation enforcement February 2026' },
-  { id:'china1',  category:'china',  label:'SAFE & PBoC',        query:'China SAFE PBoC cross-border payment regulation 2026' },
-  { id:'china2',  category:'china',  label:'CIPS & RMB',         query:'CIPS RMB cross-border payment settlement 2026' },
-  { id:'china3',  category:'china',  label:'China Fintech',      query:'China fintech payment policy regulation 2026' },
-  { id:'us1',     category:'us',     label:'OFAC & Sanctions',   query:'OFAC sanctions payment enforcement action 2026' },
-  { id:'us2',     category:'us',     label:'FinCEN & AML',       query:'FinCEN AML money laundering payment enforcement 2026' },
-  { id:'us3',     category:'us',     label:'CFPB & Remittance',  query:'CFPB remittance cross-border transfer regulation 2026' },
-  { id:'global1', category:'global', label:'G20 & BIS',          query:'G20 BIS cross-border payments reform 2026' },
-  { id:'global2', category:'global', label:'SWIFT & ISO 20022',  query:'SWIFT ISO 20022 payment standard migration 2026' },
-  { id:'global3', category:'global', label:'CBDC & mBridge',     query:'CBDC mBridge digital currency cross-border 2026' },
-  { id:'legal1',  category:'legal',  label:'Legal & Compliance', query:'payments fintech compliance legal enforcement 2026' },
+  // NEWS SOURCES
+  { id:'src1', category:'pub', label:'Bloomberg & Reuters',       query:'Bloomberg Reuters cross-border payments fintech news 2026' },
+  { id:'src2', category:'pub', label:'Payments Dive & Am. Banker',query:'payments banking fintech regulation news 2026' },
+  { id:'src3', category:'pub', label:'The Paypers & a16z',        query:'fintech payments cross-border innovation news 2026' },
+  { id:'src4', category:'pub', label:'Fed, CFPB, FinCEN, OCC',    query:'Federal Reserve CFPB FinCEN OCC payments enforcement 2026' },
+  // TOPIC SECTIONS
+  { id:'china', category:'china', label:'China — SAFE, PBoC, CIPS, RMB', query:'China SAFE PBoC CIPS RMB cross-border payment regulation 2026' },
+  { id:'us',    category:'us',    label:'US Regulatory — OFAC, FinCEN, CFPB', query:'OFAC FinCEN CFPB sanctions AML remittance enforcement 2026' },
+  { id:'global',category:'global',label:'Global — G20, SWIFT, CBDC',     query:'G20 SWIFT ISO20022 CBDC mBridge cross-border payment 2026' },
+  { id:'legal', category:'legal', label:'Legal & Compliance',             query:'cross-border payment legal compliance enforcement lawsuit 2026' },
 ];
 
 function timeAgo(dateStr) {
@@ -352,7 +344,7 @@ async function fetchTopic(topic, retries = 2) {
       const res = await fetch('/api/news', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: topic.query })
+        body: JSON.stringify({ query: topic.query, label: topic.label })
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const items = await res.json();
