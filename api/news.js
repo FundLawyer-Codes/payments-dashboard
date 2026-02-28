@@ -21,34 +21,34 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'web-search-2025-03-05',
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 2000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        tools: [{
+          type: 'web_search_20250305',
+          name: 'web_search',
+          max_uses: 3,
+        }],
         tool_choice: { type: 'any' },
         messages: [{
           role: 'user',
-          content: `You are a research assistant helping an in-house lawyer at a cross-border payments company focused on China inbound/outbound corridors.
+          content: `You are a research assistant for an in-house lawyer at a cross-border payments company focused on China corridors.
 
-Find the 4 most recent and relevant news articles for the section: "${label}"
-Search for: ${query}
+Find 4 recent news articles (last 60 days) about: "${label}"
+Search query: ${query}
 
-- Search multiple times if needed to find good results
-- Prioritize Bloomberg, Reuters, regulatory agency websites, and payments industry publications
-- Focus on: regulatory changes, enforcement actions, policy updates, industry developments
-- Articles should be from the last 60 days where possible
-- Return ONLY a raw JSON array, no markdown, no explanation:
+Return ONLY a raw JSON array:
+[{"title":"...","url":"https://...","source":"Bloomberg/Reuters/etc","date":"YYYY-MM-DD"}]
 
-[{"title":"Article title","url":"https://...","source":"Bloomberg / Reuters / etc","date":"YYYY-MM-DD"}]
-
-If nothing relevant found after searching, return: []`
+No markdown, no explanation. If nothing found: []`
         }],
       }),
     });
 
     const data = await response.json();
-    console.log(`[${label}] blocks:`, data.content?.map(b => b.type).join(','), 'error:', data.error?.message);
+    console.log(`[${label}] stop:`, data.stop_reason, 'error:', data.error?.message, 'blocks:', data.content?.map(b=>b.type).join(','));
 
     const textBlock = (data.content || []).find(b => b.type === 'text');
     if (!textBlock) return res.status(200).json([]);
@@ -56,7 +56,7 @@ If nothing relevant found after searching, return: []`
     let text = textBlock.text.trim().replace(/```json|```/g, '').trim();
     const match = text.match(/\[[\s\S]*\]/);
     const items = match ? JSON.parse(match[0]) : [];
-    console.log(`[${label}] found ${items.length} items`);
+    console.log(`[${label}] found:`, items.length);
 
     return res.status(200).json(items);
 
