@@ -11,11 +11,12 @@
     --border: #E2DDD5;
     --ink: #1A1714;
     --muted: #8A847C;
-    --accent: #B5541A;
-    --accent2: #1A4B8A;
-    --accent3: #1A7A4B;
-    --accent4: #6B1A8A;
-    --pub: #7A5C1A;
+    --china:  #B5541A;
+    --us:     #1A4B8A;
+    --global: #1A7A4B;
+    --industry: #7A5C1A;
+    --enforce: #8A1A1A;
+    --reg:    #6B1A8A;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--ink); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
@@ -34,10 +35,10 @@
   .masthead-title { font-family:'Libre Baskerville',serif; font-size:clamp(22px,4vw,36px); font-weight:700; line-height:1; }
   .masthead-sub { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:6px; }
   .masthead-right { text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .live-dot { display:inline-block; width:7px; height:7px; background:var(--accent3); border-radius:50%; margin-right:5px; animation:pulse 2s infinite; }
+  .live-dot { display:inline-block; width:7px; height:7px; background:var(--global); border-radius:50%; margin-right:5px; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .tabs { border-bottom:1px solid var(--ink); padding:8px 40px; display:flex; overflow-x:auto; }
+  .tabs { border-bottom:1px solid var(--ink); padding:8px 40px; display:flex; overflow-x:auto; gap:0; }
   .tab { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:4px 16px; border-right:1px solid var(--border); color:var(--muted); cursor:pointer; white-space:nowrap; background:none; border-top:none; border-bottom:none; border-left:none; transition:color 0.15s; }
   .tab:first-child { padding-left:0; }
   .tab:hover, .tab.active { color:var(--ink); font-weight:500; }
@@ -50,18 +51,23 @@
   .section:nth-child(even) { border-right:none; }
 
   .section-head { border-bottom:2px solid var(--ink); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
-  .section-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; }
-  .section-label.pub    { color:var(--pub); }
-  .section-label.china  { color:var(--accent); }
-  .section-label.us     { color:var(--accent2); }
-  .section-label.global { color:var(--accent3); }
-  .section-label.legal  { color:var(--accent4); }
+  .section-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; font-weight:500; }
+  .section-desc { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
+
+  .label-china    { color:var(--china); }
+  .label-us       { color:var(--us); }
+  .label-global   { color:var(--global); }
+  .label-industry { color:var(--industry); }
+  .label-enforce  { color:var(--enforce); }
+  .label-reg      { color:var(--reg); }
+
   .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .dot.pub    { background:var(--pub); }
-  .dot.china  { background:var(--accent); }
-  .dot.us     { background:var(--accent2); }
-  .dot.global { background:var(--accent3); }
-  .dot.legal  { background:var(--accent4); }
+  .dot-china    { background:var(--china); }
+  .dot-us       { background:var(--us); }
+  .dot-global   { background:var(--global); }
+  .dot-industry { background:var(--industry); }
+  .dot-enforce  { background:var(--enforce); }
+  .dot-reg      { background:var(--reg); }
 
   .article { padding:14px 20px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; text-decoration:none; color:inherit; transition:background 0.12s; }
   .article:last-child { border-bottom:none; }
@@ -99,7 +105,7 @@
   </div>
   <div class="masthead-center">
     <div class="masthead-title">Payments Intelligence</div>
-    <div class="masthead-sub">Morning Brief · Cross-Border Edition</div>
+    <div class="masthead-sub">Morning Brief · Cross-Border Legal Edition</div>
   </div>
   <div class="masthead-right">
     <span class="live-dot"></span><span id="last-updated">Loading...</span>
@@ -107,32 +113,61 @@
 </div>
 
 <div class="tabs">
-  <button class="tab active" data-filter="all">All Topics</button>
-  <button class="tab" data-filter="pub">Publications</button>
+  <button class="tab active" data-filter="all">All</button>
   <button class="tab" data-filter="china">China</button>
-  <button class="tab" data-filter="us">US Regulatory</button>
+  <button class="tab" data-filter="us">US</button>
   <button class="tab" data-filter="global">Global</button>
-  <button class="tab" data-filter="legal">Legal</button>
+  <button class="tab" data-filter="industry">Industry</button>
+  <button class="tab" data-filter="enforce">Enforcement</button>
+  <button class="tab" data-filter="reg">Regulators</button>
 </div>
 
 <div class="container">
   <div class="grid" id="grid"></div>
   <div class="footer">
-    <div class="footer-note">Google News RSS · Refreshes on load · <span id="article-count">—</span> headlines</div>
+    <div class="footer-note">Google News · Refreshes on load · <span id="article-count">—</span> headlines</div>
     <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
   </div>
 </div>
 
 <script>
 const SECTIONS = [
-  { id:'bloomberg_reuters', category:'pub',    label:'Bloomberg & Reuters' },
-  { id:'payments_banking',  category:'pub',    label:'Payments Dive & Am. Banker' },
-  { id:'paypers_a16z',      category:'pub',    label:'The Paypers & a16z' },
-  { id:'regulators',        category:'pub',    label:'Fed, CFPB, FinCEN, OCC' },
-  { id:'china',             category:'china',  label:'China — SAFE, PBoC, CIPS, RMB' },
-  { id:'us_regulatory',     category:'us',     label:'US — OFAC, FinCEN, CFPB' },
-  { id:'global',            category:'global', label:'Global — G20, SWIFT, CBDC' },
-  { id:'legal',             category:'legal',  label:'Legal & Compliance' },
+  {
+    id: 'china',
+    category: 'china',
+    label: 'China Cross-Border',
+    desc: 'SAFE · PBoC · CIPS · RMB · FTZ',
+  },
+  {
+    id: 'us',
+    category: 'us',
+    label: 'US Cross-Border',
+    desc: 'OFAC · FinCEN · CFPB · MSB Licensing',
+  },
+  {
+    id: 'global',
+    category: 'global',
+    label: 'Global Infrastructure',
+    desc: 'G20 · SWIFT · ISO 20022 · CBDC · mBridge',
+  },
+  {
+    id: 'industry',
+    category: 'industry',
+    label: 'Industry & Market',
+    desc: 'Bloomberg · Reuters · Payments Dive',
+  },
+  {
+    id: 'enforcement',
+    category: 'enforce',
+    label: 'Enforcement & Legal',
+    desc: 'Penalties · Lawsuits · Compliance Failures',
+  },
+  {
+    id: 'regulators',
+    category: 'reg',
+    label: 'Regulatory Agencies',
+    desc: 'Fed · CFPB · FinCEN · OCC · HKMA · MAS',
+  },
 ];
 
 function timeAgo(dateStr) {
@@ -151,8 +186,11 @@ function buildSection(s) {
   el.dataset.category = s.category;
   el.innerHTML = `
     <div class="section-head">
-      <span class="section-label ${s.category}">${s.label}</span>
-      <span class="dot ${s.category}"></span>
+      <div>
+        <div class="section-label label-${s.category}">${s.label}</div>
+        <div class="section-desc">${s.desc}</div>
+      </div>
+      <span class="dot dot-${s.category}"></span>
     </div>
     <div id="articles-${s.id}">
       <div class="loading">Loading<span class="spinner"></span></div>
@@ -209,10 +247,8 @@ async function init() {
   const grid = document.getElementById('grid');
   SECTIONS.forEach(s => grid.appendChild(buildSection(s)));
 
-  // Fetch all sections in parallel — RSS is fast
   const counts = await Promise.all(SECTIONS.map(fetchSection));
   const total = counts.reduce((a,b) => a+b, 0);
-
   document.getElementById('article-count').textContent = `${total} headlines`;
   document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
 }
