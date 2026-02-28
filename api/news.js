@@ -6,13 +6,20 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-// Each feed can have multiple URLs — results are merged and deduplicated
 const FEEDS = {
-  china: [
-    'https://news.google.com/rss/search?q=China+cross-border+payment+OR+China+payment+regulation+OR+CIPS+payment&hl=en-US&gl=US&ceid=US:en',
-    'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+  // China cross-border: regulatory + industry + WeChat Pay + Alipay
+  china_reg: [
     'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E5%A4%96%E6%B1%87%E7%AE%A1%E7%90%86%E5%B1%80+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E5%A4%96%E6%B1%87%E7%AE%A1%E7%90%86%E5%B1%80+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E7%89%8C%E7%85%A7+%E8%B7%A8%E5%A2%83+OR+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84+%E5%A4%84%E7%BD%9A&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=China+cross-border+payment+regulation+OR+SAFE+payment+OR+PBoC+payment&hl=en-US&gl=US&ceid=US:en',
+  ],
+  china_industry: [
+    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E8%A1%8C%E4%B8%9A&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E5%AE%9D+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E8%BF%9E%E8%BF%9E%E6%94%AF%E4%BB%98+OR+PingPong+OR+%E4%B8%87%E9%87%8C%E6%B1%87+OR+%E7%A9%BA%E4%B8%AD%E4%BA%91%E6%B1%87&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=Alipay+cross-border+OR+WeChat+Pay+cross-border+OR+Lianlian+payment&hl=en-US&gl=US&ceid=US:en',
   ],
   us: [
     'https://news.google.com/rss/search?q=OFAC+cross-border+payment+OR+FinCEN+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
@@ -22,17 +29,25 @@ const FEEDS = {
   ],
   industry: [
     'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry&hl=en-US&gl=US&ceid=US:en',
+    'https://chinabankingnews.com/feed/',
   ],
   enforcement: [
     'https://news.google.com/rss/search?q=fintech+payment+enforcement+OR+payment+penalty+OR+payment+lawsuit&hl=en-US&gl=US&ceid=US:en',
   ],
   chinareports: [
-    'https://news.google.com/rss/search?q=IFLR+China+payment+OR+Fangda+fintech+OR+Han+Kun+fintech+OR+JunHe+payment+OR+King+Wood+Mallesons+payment&hl=en-US&gl=US&ceid=US:en',
-    'https://news.google.com/rss/search?q=Cooley+payment+OR+Latham+Watkins+payment+OR+Debevoise+payment+OR+Morrison+Foerster+fintech+OR+Covington+payment+OR+Davis+Polk+payment&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=IFLR+China+payment+OR+Fangda+fintech+OR+Han+Kun+fintech+OR+King+Wood+Mallesons+payment&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=Cooley+payment+OR+Latham+Watkins+payment+OR+Debevoise+payment+OR+Morrison+Foerster+fintech&hl=en-US&gl=US&ceid=US:en',
   ],
   regulators: [
     'https://news.google.com/rss/search?q=Federal+Reserve+payment+OR+CFPB+payment+OR+FinCEN+enforcement+OR+MAS+payment&hl=en-US&gl=US&ceid=US:en',
   ],
+};
+
+// How many items to return per feed
+const LIMITS = {
+  china_reg:     10,
+  china_industry:10,
+  default:        5,
 };
 
 function parseRSS(xml) {
@@ -64,24 +79,23 @@ export default async function handler(req, res) {
   const feedUrls = FEEDS[feed];
   if (!feedUrls) return res.status(400).json({ error: 'Unknown feed' });
 
+  const limit = LIMITS[feed] || LIMITS.default;
+
   try {
-    // Fetch all URLs for this feed in parallel
     const responses = await Promise.all(
       feedUrls.map(async (url, i) => {
         try {
           const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' } });
           const text = await r.text();
-          const itemCount = (text.match(/<item>/g) || []).length;
-          console.log(`[${feed}][${i}] status=${r.status} items=${itemCount} url=${url.slice(0,80)}`);
+          console.log(`[${feed}][${i}] status=${r.status} items=${(text.match(/<item>/g)||[]).length}`);
           return text;
         } catch(e) {
-          console.log(`[${feed}][${i}] FAILED: ${e.message} url=${url.slice(0,80)}`);
+          console.log(`[${feed}][${i}] FAILED: ${e.message}`);
           return '';
         }
       })
     );
 
-    // Parse and merge, deduplicate by title, sort by date, take top 5
     const allItems = responses.flatMap(xml => parseRSS(xml));
     const seen = new Set();
     const unique = allItems.filter(item => {
@@ -91,9 +105,9 @@ export default async function handler(req, res) {
       return true;
     });
     unique.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const items = unique.slice(0, 5);
+    const items = unique.slice(0, limit);
 
-    console.log(`[${feed}] fetched ${items.length} items from ${feedUrls.length} feeds`);
+    console.log(`[${feed}] returning ${items.length} items`);
     return res.status(200).json(items);
   } catch (e) {
     console.error(`[${feed}] error:`, e.message);

@@ -4,105 +4,126 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Payments Intelligence · Morning Brief</title>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F7F4EF;
     --border: #E2DDD5;
     --ink: #1A1714;
     --muted: #8A847C;
-    --china:       #B5541A;
-    --chinareports:#1A6B6B;
-    --us:          #1A4B8A;
-    --global:      #1A7A4B;
-    --industry:    #7A5C1A;
-    --enforce:     #8A1A1A;
-    --reg:         #6B1A8A;
+    --faint: #F0EDE8;
+    --china-reg:    #B5541A;
+    --china-ind:    #C4871A;
+    --chinareports: #1A6B6B;
+    --us:           #1A4B8A;
+    --global:       #1A7A4B;
+    --industry:     #7A5C1A;
+    --enforce:      #8A1A1A;
+    --reg:          #6B1A8A;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--ink); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
 
   /* MASTHEAD */
-  .masthead { border-bottom:3px double var(--ink); padding:24px 40px 20px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; }
+  .masthead { border-bottom:3px double var(--ink); padding:20px 40px 16px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:20px; }
   .masthead-left { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .masthead-left span { display:block; }
+  .masthead-left span { display:block; line-height:1.7; }
   .masthead-center { text-align:center; }
-  .masthead-title { font-family:'Libre Baskerville',serif; font-size:clamp(22px,4vw,36px); font-weight:700; line-height:1; }
-  .masthead-sub { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:6px; }
+  .masthead-title { font-family:'Libre Baskerville',serif; font-size:clamp(20px,3.5vw,32px); font-weight:700; line-height:1; }
+  .masthead-sub { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:5px; }
   .masthead-right { text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .live-dot { display:inline-block; width:7px; height:7px; background:var(--china); border-radius:50%; margin-right:5px; animation:pulse 2s infinite; }
+  .live-dot { display:inline-block; width:6px; height:6px; background:var(--china-reg); border-radius:50%; margin-right:5px; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  /* PAGE TABS — China / Global */
-  .page-tabs { display:flex; border-bottom:2px solid var(--ink); }
-  .page-tab { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; padding:12px 32px; cursor:pointer; background:none; border:none; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.15s; }
+  /* PAGE TABS */
+  .page-tabs { display:flex; border-bottom:2px solid var(--ink); padding:0 40px; background:var(--bg); position:sticky; top:0; z-index:10; }
+  .page-tab { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; padding:11px 28px; cursor:pointer; background:none; border:none; color:var(--muted); border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.15s; }
   .page-tab:hover { color:var(--ink); }
   .page-tab.active { color:var(--ink); font-weight:600; border-bottom-color:var(--ink); }
 
-  /* SECTION FILTER TABS */
-  .filter-bar { border-bottom:1px solid var(--border); padding:6px 40px; display:flex; overflow-x:auto; gap:0; }
-  .ftab { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:3px 14px; border-right:1px solid var(--border); color:var(--muted); cursor:pointer; white-space:nowrap; background:none; border-top:none; border-bottom:none; border-left:none; transition:color 0.15s; }
-  .ftab:first-child { padding-left:0; }
-  .ftab:hover, .ftab.active { color:var(--ink); font-weight:500; }
-
-  /* GRID */
-  .container { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
+  /* PAGE */
   .page { display:none; }
   .page.active { display:block; }
-  .grid { display:grid; grid-template-columns:repeat(2,1fr); border:1px solid var(--ink); }
+  .container { max-width:1100px; margin:0 auto; padding:28px 40px 60px; }
 
-  .section { border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); display:none; }
-  .section.visible { display:block; }
-  .section:nth-child(even) { border-right:none; }
+  /* CHINA PAGE — two column layout */
+  .china-layout { display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid var(--ink); }
 
-  .section-head { border-bottom:2px solid var(--ink); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
-  .section-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; font-weight:500; }
-  .section-desc { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
+  /* NEWS COLUMN */
+  .news-col { border-right:1px solid var(--ink); }
+  .news-col:last-child { border-right:none; }
+  .col-header { padding:14px 22px; border-bottom:2px solid var(--ink); display:flex; align-items:center; justify-content:space-between; background:var(--faint); }
+  .col-title { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; font-weight:600; }
+  .col-title.reg { color:var(--china-reg); }
+  .col-title.ind { color:var(--china-ind); }
+  .col-subtitle { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
+  .col-dot { width:7px; height:7px; border-radius:50%; }
+  .col-dot.reg { background:var(--china-reg); }
+  .col-dot.ind { background:var(--china-ind); }
 
-  .label-china        { color:var(--china); }
+  /* ARTICLE ROW */
+  .art { display:grid; grid-template-columns:auto 1fr auto; gap:0; border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:background 0.1s; align-items:stretch; }
+  .art:last-child { border-bottom:none; }
+  .art:hover { background:rgba(0,0,0,0.022); }
+  .art-num { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--border); padding:14px 10px 14px 22px; min-width:42px; padding-top:16px; }
+  .art-body { padding:13px 12px 13px 0; }
+  .art-title { font-family:'Libre Baskerville',serif; font-size:13px; line-height:1.5; }
+  .art-title.zh { font-family:'Noto Serif SC','Libre Baskerville',serif; font-size:13px; }
+  .art-source { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-top:4px; display:block; }
+  .art-meta { padding:13px 18px 13px 8px; text-align:right; display:flex; flex-direction:column; justify-content:center; gap:3px; min-width:64px; }
+  .art-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--border); white-space:nowrap; }
+  .art-tag { font-family:'JetBrains Mono',monospace; font-size:8px; padding:2px 5px; border-radius:2px; text-transform:uppercase; letter-spacing:0.05em; }
+  .art-tag.reg { background:#FEF0E7; color:var(--china-reg); }
+  .art-tag.ind { background:#FEF8E7; color:var(--china-ind); }
+
+  /* GLOBAL PAGE — 2-col grid */
+  .global-grid { display:grid; grid-template-columns:repeat(2,1fr); border:1px solid var(--ink); }
+  .g-section { border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+  .g-section:nth-child(even) { border-right:none; }
+  .g-head { border-bottom:2px solid var(--ink); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; background:var(--faint); }
+  .g-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; font-weight:500; }
+  .g-desc { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
+  .g-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+  .label-us      { color:var(--us); }
+  .label-global  { color:var(--global); }
+  .label-industry{ color:var(--industry); }
+  .label-enforce { color:var(--enforce); }
+  .label-reg     { color:var(--reg); }
   .label-chinareports { color:var(--chinareports); }
-  .label-us           { color:var(--us); }
-  .label-global       { color:var(--global); }
-  .label-industry     { color:var(--industry); }
-  .label-enforce      { color:var(--enforce); }
-  .label-reg          { color:var(--reg); }
-
-  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-  .dot-china        { background:var(--china); }
+  .dot-us      { background:var(--us); }
+  .dot-global  { background:var(--global); }
+  .dot-industry{ background:var(--industry); }
+  .dot-enforce { background:var(--enforce); }
+  .dot-reg     { background:var(--reg); }
   .dot-chinareports { background:var(--chinareports); }
-  .dot-us           { background:var(--us); }
-  .dot-global       { background:var(--global); }
-  .dot-industry     { background:var(--industry); }
-  .dot-enforce      { background:var(--enforce); }
-  .dot-reg          { background:var(--reg); }
 
-  /* ARTICLES */
-  .article { padding:14px 20px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; text-decoration:none; color:inherit; transition:background 0.12s; }
-  .article:last-child { border-bottom:none; }
-  .article:hover { background:rgba(0,0,0,0.025); }
-  .article-title { font-family:'Libre Baskerville',serif; font-size:13.5px; line-height:1.45; }
-  .article-meta { text-align:right; flex-shrink:0; }
-  .article-source { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); display:block; }
-  .article-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--border); display:block; margin-top:2px; }
+  .g-article { padding:12px 18px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr auto; gap:10px; align-items:start; text-decoration:none; color:inherit; transition:background 0.1s; }
+  .g-article:last-child { border-bottom:none; }
+  .g-article:hover { background:rgba(0,0,0,0.022); }
+  .g-article-title { font-family:'Libre Baskerville',serif; font-size:13px; line-height:1.45; }
+  .g-article-meta { text-align:right; flex-shrink:0; }
+  .g-article-source { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); display:block; }
+  .g-article-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--border); display:block; margin-top:2px; }
 
   .loading { padding:32px 20px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
-  .spinner { display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--muted); border-radius:50%; margin-left:8px; vertical-align:middle; animation:spin 0.8s linear infinite; }
+  .spinner { display:inline-block; width:11px; height:11px; border:2px solid var(--border); border-top-color:var(--muted); border-radius:50%; margin-left:8px; vertical-align:middle; animation:spin 0.8s linear infinite; }
   @keyframes spin { to{transform:rotate(360deg)} }
   .empty { padding:24px 20px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
 
   /* FOOTER */
-  .footer { margin-top:32px; border-top:1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footer { margin-top:28px; border-top:1px solid var(--border); padding-top:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
   .footer-note { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); }
   .refresh-btn { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:6px 16px; background:var(--ink); color:var(--bg); border:none; border-radius:3px; cursor:pointer; }
   .refresh-btn:hover { opacity:0.75; }
 
-  @media(max-width:700px) {
-    .grid { grid-template-columns:1fr; }
+  @media(max-width:768px) {
+    .china-layout, .global-grid { grid-template-columns:1fr; }
+    .news-col { border-right:none; border-bottom:1px solid var(--ink); }
     .masthead { grid-template-columns:1fr; text-align:center; }
     .masthead-right { text-align:center; }
     .container { padding:20px 16px 40px; }
-    .filter-bar { padding:6px 16px; }
-    .page-tab { padding:10px 20px; }
+    .page-tabs { padding:0 16px; }
   }
 </style>
 </head>
@@ -122,23 +143,55 @@
   </div>
 </div>
 
-<!-- PAGE TABS -->
-<div class="page-tabs" style="padding: 0 40px;">
-  <button class="page-tab active" data-page="china-page">🇨🇳 China</button>
+<div class="page-tabs">
+  <button class="page-tab active" data-page="china-page">🇨🇳 China Cross-Border</button>
   <button class="page-tab" data-page="global-page">🌐 Global & Others</button>
 </div>
 
 <!-- CHINA PAGE -->
 <div id="china-page" class="page active">
-  <div class="filter-bar">
-    <button class="ftab active" data-filter="all">All</button>
-    <button class="ftab" data-filter="china">China Regulatory</button>
-    <button class="ftab" data-filter="chinareports">Legal Reports</button>
-  </div>
   <div class="container">
-    <div class="grid" id="china-grid"></div>
+    <div class="china-layout">
+      <!-- Regulatory column -->
+      <div class="news-col">
+        <div class="col-header">
+          <div>
+            <div class="col-title reg">监管动态</div>
+            <div class="col-subtitle">人民银行 · 外管局 · 支付牌照 · PBoC · SAFE</div>
+          </div>
+          <span class="col-dot reg"></span>
+        </div>
+        <div id="articles-china_reg"><div class="loading">Loading<span class="spinner"></span></div></div>
+      </div>
+      <!-- Industry column -->
+      <div class="news-col">
+        <div class="col-header">
+          <div>
+            <div class="col-title ind">行业动态</div>
+            <div class="col-subtitle">微信支付 · 支付宝 · 连连 · PingPong · 万里汇</div>
+          </div>
+          <span class="col-dot ind"></span>
+        </div>
+        <div id="articles-china_industry"><div class="loading">Loading<span class="spinner"></span></div></div>
+      </div>
+    </div>
+
+    <!-- Legal Reports — full width below -->
+    <div style="border:1px solid var(--ink); border-top:none;">
+      <div class="col-header" style="border-bottom:2px solid var(--ink);">
+        <div>
+          <div class="col-title" style="color:var(--chinareports);">法律评析 · Legal Reports</div>
+          <div class="col-subtitle">IFLR · Fangda · Han Kun · KWM · Cooley · Latham · Debevoise · Morrison Foerster</div>
+        </div>
+        <span class="col-dot" style="background:var(--chinareports);"></span>
+      </div>
+      <div id="articles-chinareports" style="display:grid; grid-template-columns:1fr 1fr;">
+        <div class="loading" style="grid-column:1/-1;">Loading<span class="spinner"></span></div>
+      </div>
+    </div>
+
     <div class="footer">
-      <div class="footer-note">Google News · <span id="china-count">—</span> headlines</div>
+      <div class="footer-note">Google News RSS · <span id="china-count">—</span> headlines</div>
       <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
     </div>
   </div>
@@ -146,35 +199,22 @@
 
 <!-- GLOBAL PAGE -->
 <div id="global-page" class="page">
-  <div class="filter-bar">
-    <button class="ftab active" data-filter="all">All</button>
-    <button class="ftab" data-filter="us">US</button>
-    <button class="ftab" data-filter="global">Global</button>
-    <button class="ftab" data-filter="industry">Industry</button>
-    <button class="ftab" data-filter="enforce">Enforcement</button>
-    <button class="ftab" data-filter="reg">Regulators</button>
-  </div>
   <div class="container">
-    <div class="grid" id="global-grid"></div>
+    <div class="global-grid" id="global-grid"></div>
     <div class="footer">
-      <div class="footer-note">Google News · <span id="global-count">—</span> headlines</div>
+      <div class="footer-note">Google News RSS · <span id="global-count">—</span> headlines</div>
       <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
     </div>
   </div>
 </div>
 
 <script>
-const CHINA_SECTIONS = [
-  { id:'china',        category:'china',        label:'China Cross-Border',         desc:'人民银行 · SAFE · CIPS · RMB · 支付机构' },
-  { id:'chinareports', category:'chinareports', label:'China Fintech — Legal Reports', desc:'IFLR · Law Firm Alerts · Fangda · Han Kun · KWM' },
-];
-
 const GLOBAL_SECTIONS = [
-  { id:'us',          category:'us',      label:'US Cross-Border',       desc:'OFAC · FinCEN · CFPB · MSB Licensing' },
-  { id:'global',      category:'global',  label:'Global Infrastructure', desc:'G20 · SWIFT · ISO 20022 · CBDC · mBridge' },
-  { id:'industry',    category:'industry',label:'Industry & Market',     desc:'Bloomberg · Reuters · Payments Dive' },
-  { id:'enforcement', category:'enforce', label:'Enforcement & Legal',   desc:'Penalties · Lawsuits · Compliance Failures' },
-  { id:'regulators',  category:'reg',     label:'Regulatory Agencies',   desc:'Fed · CFPB · FinCEN · OCC · HKMA · MAS' },
+  { id:'us',          category:'us',      label:'US Cross-Border',        desc:'OFAC · FinCEN · CFPB · MSB Licensing' },
+  { id:'global',      category:'global',  label:'Global Infrastructure',  desc:'G20 · SWIFT · ISO 20022 · CBDC · mBridge' },
+  { id:'industry',    category:'industry',label:'Industry & Market',      desc:'Bloomberg · Reuters · Payments Dive · ChinaBankingNews' },
+  { id:'enforcement', category:'enforce', label:'Enforcement & Legal',    desc:'Penalties · Lawsuits · Compliance Failures' },
+  { id:'regulators',  category:'reg',     label:'Regulatory Agencies',    desc:'Fed · CFPB · FinCEN · OCC · HKMA · MAS' },
 ];
 
 function timeAgo(dateStr) {
@@ -187,48 +227,77 @@ function timeAgo(dateStr) {
   return `${Math.floor(diff/1440)}d ago`;
 }
 
-function buildSection(s) {
-  const el = document.createElement('div');
-  el.className = 'section visible';
-  el.dataset.category = s.category;
-  el.innerHTML = `
-    <div class="section-head">
-      <div>
-        <div class="section-label label-${s.category}">${s.label}</div>
-        <div class="section-desc">${s.desc}</div>
-      </div>
-      <span class="dot dot-${s.category}"></span>
-    </div>
-    <div id="articles-${s.id}">
-      <div class="loading">Loading<span class="spinner"></span></div>
-    </div>`;
-  return el;
+function isChinese(text) {
+  return /[\u4e00-\u9fff]/.test(text);
 }
 
-function renderArticles(id, items) {
+function renderChinaArticles(id, items, tagClass) {
   const el = document.getElementById(`articles-${id}`);
-  if (!items || !items.length) { el.innerHTML = '<div class="empty">No recent articles found</div>'; return 0; }
-  el.innerHTML = items.map(item => `
-    <a class="article" href="${item.url}" target="_blank" rel="noopener">
-      <div class="article-title">${item.title}</div>
-      <div class="article-meta">
-        <span class="article-source">${item.source}</span>
-        <span class="article-time">${timeAgo(item.date)}</span>
+  if (!items || !items.length) { el.innerHTML = '<div class="empty">暂无最新文章</div>'; return 0; }
+  el.innerHTML = items.map((item, i) => `
+    <a class="art" href="${item.url}" target="_blank" rel="noopener">
+      <div class="art-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="art-body">
+        <div class="art-title ${isChinese(item.title)?'zh':''}">${item.title}</div>
+        <span class="art-source">${item.source}</span>
+      </div>
+      <div class="art-meta">
+        <span class="art-time">${timeAgo(item.date) || item.date}</span>
       </div>
     </a>`).join('');
   return items.length;
 }
 
-async function fetchSection(s) {
+function renderLegalReports(id, items) {
+  const el = document.getElementById(`articles-${id}`);
+  if (!items || !items.length) { el.innerHTML = '<div class="empty" style="grid-column:1/-1;">No recent reports found</div>'; return 0; }
+  el.innerHTML = items.map(item => `
+    <a class="g-article" href="${item.url}" target="_blank" rel="noopener">
+      <div class="g-article-title">${item.title}</div>
+      <div class="g-article-meta">
+        <span class="g-article-source">${item.source}</span>
+        <span class="g-article-time">${timeAgo(item.date) || item.date}</span>
+      </div>
+    </a>`).join('');
+  return items.length;
+}
+
+function buildGlobalSection(s) {
+  const el = document.createElement('div');
+  el.className = 'g-section';
+  el.innerHTML = `
+    <div class="g-head">
+      <div>
+        <div class="g-label label-${s.category}">${s.label}</div>
+        <div class="g-desc">${s.desc}</div>
+      </div>
+      <span class="g-dot dot-${s.category}"></span>
+    </div>
+    <div id="articles-${s.id}"><div class="loading">Loading<span class="spinner"></span></div></div>`;
+  return el;
+}
+
+function renderGlobalArticles(id, items) {
+  const el = document.getElementById(`articles-${id}`);
+  if (!items || !items.length) { el.innerHTML = '<div class="empty">No recent articles found</div>'; return 0; }
+  el.innerHTML = items.map(item => `
+    <a class="g-article" href="${item.url}" target="_blank" rel="noopener">
+      <div class="g-article-title">${item.title}</div>
+      <div class="g-article-meta">
+        <span class="g-article-source">${item.source}</span>
+        <span class="g-article-time">${timeAgo(item.date) || item.date}</span>
+      </div>
+    </a>`).join('');
+  return items.length;
+}
+
+async function fetchFeed(id) {
   try {
-    const res = await fetch(`/api/news?feed=${s.id}`);
+    const res = await fetch(`/api/news?feed=${id}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const items = await res.json();
-    return renderArticles(s.id, items);
+    return await res.json();
   } catch(e) {
-    const el = document.getElementById(`articles-${s.id}`);
-    if (el) el.innerHTML = '<div class="empty">Could not load</div>';
-    return 0;
+    return [];
   }
 }
 
@@ -242,42 +311,34 @@ document.querySelectorAll('.page-tab').forEach(tab => {
   });
 });
 
-// Filter tab switching — scoped to parent page
-document.querySelectorAll('.filter-bar').forEach(bar => {
-  bar.querySelectorAll('.ftab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      bar.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const f = tab.dataset.filter;
-      // Find the grid in the same page
-      const page = bar.closest('.page');
-      page.querySelectorAll('.section').forEach(s => {
-        s.classList.toggle('visible', f === 'all' || s.dataset.category === f);
-      });
-    });
-  });
-});
-
 async function init() {
   const now = new Date();
   document.getElementById('today-date').textContent = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
   document.getElementById('today-day').textContent = now.toLocaleDateString('en-US', {weekday:'long'});
 
-  // Build grids
-  const chinaGrid = document.getElementById('china-grid');
-  CHINA_SECTIONS.forEach(s => chinaGrid.appendChild(buildSection(s)));
-
+  // Build global grid
   const globalGrid = document.getElementById('global-grid');
-  GLOBAL_SECTIONS.forEach(s => globalGrid.appendChild(buildSection(s)));
+  GLOBAL_SECTIONS.forEach(s => globalGrid.appendChild(buildGlobalSection(s)));
 
   // Fetch all in parallel
-  const [chinaCounts, globalCounts] = await Promise.all([
-    Promise.all(CHINA_SECTIONS.map(fetchSection)),
-    Promise.all(GLOBAL_SECTIONS.map(fetchSection)),
+  const [regItems, indItems, legalItems, ...globalItems] = await Promise.all([
+    fetchFeed('china_reg'),
+    fetchFeed('china_industry'),
+    fetchFeed('chinareports'),
+    ...GLOBAL_SECTIONS.map(s => fetchFeed(s.id)),
   ]);
 
-  document.getElementById('china-count').textContent = `${chinaCounts.reduce((a,b)=>a+b,0)} headlines`;
-  document.getElementById('global-count').textContent = `${globalCounts.reduce((a,b)=>a+b,0)} headlines`;
+  const c1 = renderChinaArticles('china_reg', regItems, 'reg');
+  const c2 = renderChinaArticles('china_industry', indItems, 'ind');
+  const c3 = renderLegalReports('chinareports', legalItems);
+  document.getElementById('china-count').textContent = `${c1+c2+c3} headlines`;
+
+  let globalTotal = 0;
+  GLOBAL_SECTIONS.forEach((s, i) => {
+    globalTotal += renderGlobalArticles(s.id, globalItems[i]);
+  });
+  document.getElementById('global-count').textContent = `${globalTotal} headlines`;
+
   document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
 }
 
