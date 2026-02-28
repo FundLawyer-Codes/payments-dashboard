@@ -9,12 +9,9 @@ const corsHeaders = {
 };
 
 export default async function handler(req, res) {
-  // Set CORS headers
   Object.entries(corsHeaders).forEach(([k, v]) => res.setHeader(k, v));
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     const { query } = req.body;
@@ -28,33 +25,44 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
+        max_tokens: 1500,
         tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        tool_choice: { type: 'any' },
         messages: [{
           role: 'user',
-          content: `Search the web for 4 recent news articles about: ${query}
+          content: `Do a web search for: ${query}
 
-Return ONLY a JSON array, no markdown, no explanation:
-[{"title":"...","url":"https://...","source":"...","date":"YYYY-MM-DD"}]
+After searching, give me the 4 most relevant results as a JSON array only.
+No explanation. No markdown. Just the raw JSON array like this:
+[{"title":"Title here","url":"https://example.com","source":"Source Name","date":"2026-02-28"}]
 
-If nothing found return: []`
+Use today's date if the article date is unclear. Always return at least 1 result if anything relevant exists.`
         }],
       }),
     });
 
     const data = await response.json();
+
+    // Log for debugging
+    console.log('API response status:', data.type, 'content blocks:', data.content?.length);
+
     const textBlock = (data.content || []).find(b => b.type === 'text');
 
-    if (!textBlock) return res.status(200).json([]);
+    if (!textBlock) {
+      console.log('No text block found. Full response:', JSON.stringify(data).slice(0, 500));
+      return res.status(200).json([]);
+    }
+
+    console.log('Text block:', textBlock.text.slice(0, 200));
 
     let text = textBlock.text.trim().replace(/```json|```/g, '').trim();
-    const match = text.match(/\[[\s\S]*?\]/);
+    const match = text.match(/\[[\s\S]*\]/);
     const items = match ? JSON.parse(match[0]) : [];
 
     return res.status(200).json(items);
 
   } catch (e) {
-    console.error(e);
+    console.error('Handler error:', e.message);
     return res.status(200).json([]);
   }
 }
