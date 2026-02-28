@@ -34,10 +34,10 @@ const FEEDS = {
     'https://news.google.com/rss/search?q=fintech+payment+enforcement+OR+payment+penalty+OR+payment+lawsuit&hl=en-US&gl=US&ceid=US:en',
   ],
   chinareports: [
-    'https://www.jdsupra.com/feed/?q=cross-border+payment',
-    'https://www.jdsupra.com/feed/?q=China+fintech+payment',
-    'https://news.google.com/rss/search?q=China+cross-border+payment+legal+analysis+OR+China+payment+compliance+law+firm&hl=en-US&gl=US&ceid=US:en',
-    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84+%E5%88%86%E6%9E%90&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%22PRC+financial+regulation%22+OR+%22non-bank+payment+institution%22+OR+%22payment+license+China%22&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=China+%22cross-border+payment%22+regulation+analysis+2025&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%22non-banking+payment%22+China+OR+%22e-CNY+cross-border%22+OR+%22NetsUnion%22+regulation&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%E9%9D%9E%E9%93%B6%E8%A1%8C%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   ],
   regulators: [
     'https://news.google.com/rss/search?q=Federal+Reserve+payment+OR+CFPB+payment+OR+FinCEN+enforcement+OR+MAS+payment&hl=en-US&gl=US&ceid=US:en',
