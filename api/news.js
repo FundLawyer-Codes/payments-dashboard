@@ -6,10 +6,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-// Each feed can have one or two URLs — for China we fetch both EN and ZH
+// Each feed can have multiple URLs — results are merged and deduplicated
 const FEEDS = {
   china: [
-    'https://news.google.com/rss/search?q=China+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=China+cross-border+payment+OR+China+payment+regulation+OR+CIPS+payment&hl=en-US&gl=US&ceid=US:en',
     'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
     'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
     'https://news.google.com/rss/search?q=%E5%A4%96%E6%B1%87%E7%AE%A1%E7%90%86%E5%B1%80+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
@@ -38,7 +38,6 @@ const FEEDS = {
 function parseRSS(xml) {
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
-  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
     const item = match[1];
@@ -47,10 +46,6 @@ function parseRSS(xml) {
     const date   = (item.match(/<pubDate>(.*?)<\/pubDate>/))?.[1] || '';
     const source = (item.match(/<source[^>]*>(.*?)<\/source>/))?.[1] || 'Google News';
     if (!title || !url) continue;
-    if (date) {
-      const pubTime = new Date(date).getTime();
-      if (!isNaN(pubTime) && pubTime < thirtyDaysAgo) continue;
-    }
     items.push({
       title: title.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'"),
       url: url.trim(),
@@ -72,11 +67,18 @@ export default async function handler(req, res) {
   try {
     // Fetch all URLs for this feed in parallel
     const responses = await Promise.all(
-      feedUrls.map(url =>
-        fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' } })
-          .then(r => r.text())
-          .catch(() => '')
-      )
+      feedUrls.map(async (url, i) => {
+        try {
+          const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' } });
+          const text = await r.text();
+          const itemCount = (text.match(/<item>/g) || []).length;
+          console.log(`[${feed}][${i}] status=${r.status} items=${itemCount} url=${url.slice(0,80)}`);
+          return text;
+        } catch(e) {
+          console.log(`[${feed}][${i}] FAILED: ${e.message} url=${url.slice(0,80)}`);
+          return '';
+        }
+      })
     );
 
     // Parse and merge, deduplicate by title, sort by date, take top 5
