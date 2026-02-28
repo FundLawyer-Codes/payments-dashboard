@@ -15,11 +15,10 @@ const FEEDS = {
     'https://news.google.com/rss/search?q=China+cross-border+payment+regulation+OR+SAFE+payment+OR+PBoC+payment&hl=en-US&gl=US&ceid=US:en',
   ],
   china_industry: [
-    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E8%A1%8C%E4%B8%9A&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E5%AE%9D+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E8%BF%9E%E8%BF%9E%E6%94%AF%E4%BB%98+OR+PingPong+OR+%E4%B8%87%E9%87%8C%E6%B1%87+OR+%E7%A9%BA%E4%B8%AD%E4%BA%91%E6%B1%87&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=Alipay+cross-border+OR+WeChat+Pay+cross-border+OR+Lianlian+payment&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83+OR+%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E5%87%BA%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E5%AE%9D+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+OR+%E6%94%AF%E4%BB%98%E5%AE%9D+%E5%9B%BD%E9%99%85%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E8%BF%9E%E8%BF%9E%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83+OR+PingPong%E8%B7%A8%E5%A2%83+OR+%E4%B8%87%E9%87%8C%E6%B1%87%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=Alipay+cross-border+OR+WeChat+Pay+international+OR+Lianlian+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
   ],
   us: [
     'https://news.google.com/rss/search?q=OFAC+cross-border+payment+OR+FinCEN+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
@@ -35,8 +34,12 @@ const FEEDS = {
     'https://news.google.com/rss/search?q=fintech+payment+enforcement+OR+payment+penalty+OR+payment+lawsuit&hl=en-US&gl=US&ceid=US:en',
   ],
   chinareports: [
-    'https://news.google.com/rss/search?q=IFLR+China+payment+OR+Fangda+fintech+OR+Han+Kun+fintech+OR+King+Wood+Mallesons+payment&hl=en-US&gl=US&ceid=US:en',
-    'https://news.google.com/rss/search?q=Cooley+payment+OR+Latham+Watkins+payment+OR+Debevoise+payment+OR+Morrison+Foerster+fintech&hl=en-US&gl=US&ceid=US:en',
+    'https://www.jdsupra.com/feed/?q=cross-border+payment',
+    'https://www.jdsupra.com/feed/?q=China+fintech+payment',
+    'https://news.google.com/rss/search?q=China+cross-border+payment+legal+analysis+OR+China+payment+compliance+law+firm&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84+%E5%88%86%E6%9E%90&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+  ],
+    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84+%E5%88%86%E6%9E%90&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   ],
   regulators: [
     'https://news.google.com/rss/search?q=Federal+Reserve+payment+OR+CFPB+payment+OR+FinCEN+enforcement+OR+MAS+payment&hl=en-US&gl=US&ceid=US:en',
