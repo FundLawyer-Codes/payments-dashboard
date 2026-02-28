@@ -15,10 +15,10 @@ const FEEDS = {
     'https://news.google.com/rss/search?q=China+cross-border+payment+regulation+OR+SAFE+payment+OR+PBoC+payment&hl=en-US&gl=US&ceid=US:en',
   ],
   china_industry: [
-    'https://news.google.com/rss/search?q=%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83+OR+%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E5%87%BA%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E5%AE%9D+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+OR+%E6%94%AF%E4%BB%98%E5%AE%9D+%E5%9B%BD%E9%99%85%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=%E8%BF%9E%E8%BF%9E%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83+OR+PingPong%E8%B7%A8%E5%A2%83+OR+%E4%B8%87%E9%87%8C%E6%B1%87%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-    'https://news.google.com/rss/search?q=Alipay+cross-border+OR+WeChat+Pay+international+OR+Lianlian+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E6%94%AF%E4%BB%98%E5%AE%9D+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E8%BF%9E%E8%BF%9E%E6%94%AF%E4%BB%98+%E8%B7%A8%E5%A2%83&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=Alipay+cross-border+OR+WeChat+Pay+international+OR+Lianlian+payment&hl=en-US&gl=US&ceid=US:en',
   ],
   us: [
     'https://news.google.com/rss/search?q=OFAC+cross-border+payment+OR+FinCEN+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
