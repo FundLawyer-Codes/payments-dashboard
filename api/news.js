@@ -7,17 +7,19 @@ const corsHeaders = {
 };
 
 const FEEDS = {
-  china:       'https://news.google.com/rss/search?q=China+SAFE+PBoC+CIPS+RMB+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en',
-  us:          'https://news.google.com/rss/search?q=OFAC+sanctions+cross-border+payment+OR+FinCEN+AML+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
-  global:      'https://news.google.com/rss/search?q=G20+SWIFT+ISO+20022+CBDC+mBridge+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
-  industry:    'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry+market&hl=en-US&gl=US&ceid=US:en',
-  enforcement: 'https://news.google.com/rss/search?q=payments+fintech+enforcement+penalty+lawsuit+compliance&hl=en-US&gl=US&ceid=US:en',
-  regulators:  'https://news.google.com/rss/search?q=Federal+Reserve+payments+OR+CFPB+payments+OR+FinCEN+payments+OR+OCC+bank+OR+MAS+payments&hl=en-US&gl=US&ceid=US:en',
+  china:       'https://news.google.com/rss/search?q=China+SAFE+PBoC+CIPS+RMB+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  us:          'https://news.google.com/rss/search?q=OFAC+sanctions+cross-border+payment+OR+FinCEN+AML+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  global:      'https://news.google.com/rss/search?q=G20+SWIFT+ISO+20022+CBDC+mBridge+cross-border+payment&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  industry:    'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry+market&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  enforcement: 'https://news.google.com/rss/search?q=payments+fintech+enforcement+penalty+lawsuit+compliance&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  regulators:  'https://news.google.com/rss/search?q=Federal+Reserve+payments+OR+CFPB+payments+OR+FinCEN+payments+OR+OCC+bank+OR+MAS+payments&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  chinareports:'https://news.google.com/rss/search?q=China+fintech+payment+legal+report+OR+IFLR+China+fintech+OR+law+firm+China+payment+regulation&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
 };
 
 function parseRSS(xml) {
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
   let match;
   while ((match = itemRegex.exec(xml)) !== null) {
     const item = match[1];
@@ -25,14 +27,18 @@ function parseRSS(xml) {
     const url    = (item.match(/<link>(.*?)<\/link>/) || item.match(/<guid>(.*?)<\/guid>/))?.[1] || '';
     const date   = (item.match(/<pubDate>(.*?)<\/pubDate>/))?.[1] || '';
     const source = (item.match(/<source[^>]*>(.*?)<\/source>/))?.[1] || 'Google News';
-    if (title && url) {
-      items.push({
-        title: title.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'"),
-        url: url.trim(),
-        source,
-        date: date ? new Date(date).toISOString().split('T')[0] : '',
-      });
+    if (!title || !url) continue;
+    // Filter out articles older than 30 days
+    if (date) {
+      const pubTime = new Date(date).getTime();
+      if (!isNaN(pubTime) && pubTime < thirtyDaysAgo) continue;
     }
+    items.push({
+      title: title.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'"),
+      url: url.trim(),
+      source,
+      date: date ? new Date(date).toISOString().split('T')[0] : '',
+    });
   }
   return items.slice(0, 5);
 }

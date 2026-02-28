@@ -16,6 +16,7 @@
     --global: #1A7A4B;
     --industry: #7A5C1A;
     --enforce: #8A1A1A;
+    --chinareports: #1A6B6B;
     --reg:    #6B1A8A;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -59,6 +60,7 @@
   .label-global   { color:var(--global); }
   .label-industry { color:var(--industry); }
   .label-enforce  { color:var(--enforce); }
+  .label-chinareports { color:var(--chinareports); }
   .label-reg      { color:var(--reg); }
 
   .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
@@ -67,6 +69,7 @@
   .dot-global   { background:var(--global); }
   .dot-industry { background:var(--industry); }
   .dot-enforce  { background:var(--enforce); }
+  .dot-chinareports { background:var(--chinareports); }
   .dot-reg      { background:var(--reg); }
 
   .article { padding:14px 20px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; text-decoration:none; color:inherit; transition:background 0.12s; }
@@ -119,6 +122,7 @@
   <button class="tab" data-filter="global">Global</button>
   <button class="tab" data-filter="industry">Industry</button>
   <button class="tab" data-filter="enforce">Enforcement</button>
+  <button class="tab" data-filter="chinareports">CN Legal Reports</button>
   <button class="tab" data-filter="reg">Regulators</button>
 </div>
 
@@ -161,6 +165,12 @@ const SECTIONS = [
     category: 'enforce',
     label: 'Enforcement & Legal',
     desc: 'Penalties · Lawsuits · Compliance Failures',
+  },
+  {
+    id: 'chinareports',
+    category: 'chinareports',
+    label: 'China Fintech — Legal Reports',
+    desc: 'IFLR · Law Firm Alerts · Legal Commentary',
   },
   {
     id: 'regulators',
