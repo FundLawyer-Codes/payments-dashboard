@@ -39,8 +39,6 @@ const FEEDS = {
     'https://news.google.com/rss/search?q=China+cross-border+payment+legal+analysis+OR+China+payment+compliance+law+firm&hl=en-US&gl=US&ceid=US:en',
     'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84+%E5%88%86%E6%9E%90&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
   ],
-    'https://news.google.com/rss/search?q=%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98+%E6%B3%95%E5%BE%8B+%E5%90%88%E8%A7%84+%E5%88%86%E6%9E%90&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
-  ],
   regulators: [
     'https://news.google.com/rss/search?q=Federal+Reserve+payment+OR+CFPB+payment+OR+FinCEN+enforcement+OR+MAS+payment&hl=en-US&gl=US&ceid=US:en',
   ],
