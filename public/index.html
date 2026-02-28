@@ -8,7 +8,6 @@
 <style>
   :root {
     --bg: #F7F4EF;
-    --surface: #FFFFFF;
     --border: #E2DDD5;
     --ink: #1A1714;
     --muted: #8A847C;
@@ -18,16 +17,8 @@
     --accent4: #6B1A8A;
     --pub: #7A5C1A;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    min-height: 100vh;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:'Outfit',sans-serif; font-weight:300; min-height:100vh; }
 
   .masthead {
     border-bottom: 3px double var(--ink);
@@ -37,217 +28,66 @@
     align-items: center;
     gap: 20px;
   }
-  .masthead-left {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.05em;
-  }
-  .masthead-left span { display: block; }
-  .masthead-center { text-align: center; }
-  .masthead-title {
-    font-family: 'Libre Baskerville', serif;
-    font-size: clamp(22px, 4vw, 36px);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1;
-  }
-  .masthead-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 6px;
-  }
-  .masthead-right {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .live-dot {
-    display: inline-block;
-    width: 7px; height: 7px;
-    background: var(--accent3);
-    border-radius: 50%;
-    margin-right: 5px;
-    animation: pulse 2s infinite;
-  }
+  .masthead-left { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+  .masthead-left span { display:block; }
+  .masthead-center { text-align:center; }
+  .masthead-title { font-family:'Libre Baskerville',serif; font-size:clamp(22px,4vw,36px); font-weight:700; line-height:1; }
+  .masthead-sub { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); margin-top:6px; }
+  .masthead-right { text-align:right; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+  .live-dot { display:inline-block; width:7px; height:7px; background:var(--accent3); border-radius:50%; margin-right:5px; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .edition-bar {
-    border-bottom: 1px solid var(--ink);
-    padding: 8px 40px;
-    display: flex;
-    overflow-x: auto;
-  }
-  .edition-tab {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 4px 16px;
-    border-right: 1px solid var(--border);
-    color: var(--muted);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: color 0.15s;
-    background: none;
-    border-top: none; border-bottom: none; border-left: none;
-  }
-  .edition-tab:first-child { padding-left: 0; }
-  .edition-tab:hover { color: var(--ink); }
-  .edition-tab.active { color: var(--ink); font-weight: 500; }
+  .tabs { border-bottom:1px solid var(--ink); padding:8px 40px; display:flex; overflow-x:auto; }
+  .tab { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:4px 16px; border-right:1px solid var(--border); color:var(--muted); cursor:pointer; white-space:nowrap; background:none; border-top:none; border-bottom:none; border-left:none; transition:color 0.15s; }
+  .tab:first-child { padding-left:0; }
+  .tab:hover, .tab.active { color:var(--ink); font-weight:500; }
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 32px 40px 60px;
-  }
+  .container { max-width:1200px; margin:0 auto; padding:32px 40px 60px; }
+  .grid { display:grid; grid-template-columns:repeat(2,1fr); border:1px solid var(--ink); }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    border: 1px solid var(--ink);
-  }
+  .section { border-right:1px solid var(--ink); border-bottom:1px solid var(--ink); display:none; }
+  .section.visible { display:block; }
+  .section:nth-child(even) { border-right:none; }
 
-  @media (max-width: 700px) {
-    .grid { grid-template-columns: 1fr; }
-    .masthead { grid-template-columns: 1fr; text-align: center; }
-    .masthead-right { text-align: center; }
-    .container { padding: 20px 16px 40px; }
-    .edition-bar { padding: 8px 16px; }
-  }
+  .section-head { border-bottom:2px solid var(--ink); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+  .section-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-weight:500; }
+  .section-label.pub    { color:var(--pub); }
+  .section-label.china  { color:var(--accent); }
+  .section-label.us     { color:var(--accent2); }
+  .section-label.global { color:var(--accent3); }
+  .section-label.legal  { color:var(--accent4); }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dot.pub    { background:var(--pub); }
+  .dot.china  { background:var(--accent); }
+  .dot.us     { background:var(--accent2); }
+  .dot.global { background:var(--accent3); }
+  .dot.legal  { background:var(--accent4); }
 
-  .section {
-    border-right: 1px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
-    display: none;
-  }
-  .section.visible { display: block; }
-  .section:nth-child(even) { border-right: none; }
+  .article { padding:14px 20px; border-bottom:1px solid var(--border); display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; text-decoration:none; color:inherit; transition:background 0.12s; }
+  .article:last-child { border-bottom:none; }
+  .article:hover { background:rgba(0,0,0,0.025); }
+  .article-title { font-family:'Libre Baskerville',serif; font-size:13.5px; line-height:1.45; }
+  .article-meta { text-align:right; flex-shrink:0; }
+  .article-source { font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); display:block; }
+  .article-time { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--border); display:block; margin-top:2px; }
 
-  .section-head {
-    border-bottom: 2px solid var(--ink);
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  .section-label.china { color: var(--accent); }
-  .section-label.us    { color: var(--accent2); }
-  .section-label.global{ color: var(--accent3); }
-  .section-label.legal { color: var(--accent4); }
-  .section-label.pub   { color: var(--pub); }
+  .loading { padding:32px 20px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
+  .spinner { display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--muted); border-radius:50%; margin-left:8px; vertical-align:middle; animation:spin 0.8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .empty { padding:24px 20px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); }
 
-  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .section-dot.china  { background: var(--accent); }
-  .section-dot.us     { background: var(--accent2); }
-  .section-dot.global { background: var(--accent3); }
-  .section-dot.legal  { background: var(--accent4); }
-  .section-dot.pub    { background: var(--pub); }
+  .footer { margin-top:32px; border-top:1px solid var(--border); padding-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .footer-note { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); }
+  .refresh-btn { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:6px 16px; background:var(--ink); color:var(--bg); border:none; border-radius:3px; cursor:pointer; }
+  .refresh-btn:hover { opacity:0.75; }
 
-  .article {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    align-items: start;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.12s;
+  @media(max-width:700px) {
+    .grid { grid-template-columns:1fr; }
+    .masthead { grid-template-columns:1fr; text-align:center; }
+    .masthead-right { text-align:center; }
+    .container { padding:20px 16px 40px; }
+    .tabs { padding:8px 16px; }
   }
-  .article:last-child { border-bottom: none; }
-  .article:hover { background: rgba(0,0,0,0.025); }
-
-  .article-title {
-    font-family: 'Libre Baskerville', serif;
-    font-size: 13.5px;
-    line-height: 1.45;
-    color: var(--ink);
-  }
-  .article-meta { text-align: right; flex-shrink: 0; }
-  .article-source {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    display: block;
-  }
-  .article-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--border);
-    display: block;
-    margin-top: 2px;
-  }
-
-  .loading {
-    padding: 32px 20px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .spinner {
-    display: inline-block;
-    width: 12px; height: 12px;
-    border: 2px solid var(--border);
-    border-top-color: var(--muted);
-    border-radius: 50%;
-    margin-left: 8px;
-    vertical-align: middle;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .empty {
-    padding: 24px 20px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .footer {
-    margin-top: 32px;
-    border-top: 1px solid var(--border);
-    padding-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .footer-note {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-  }
-  .refresh-btn {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 6px 16px;
-    background: var(--ink);
-    color: var(--bg);
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .refresh-btn:hover { opacity: 0.75; }
 </style>
 </head>
 <body>
@@ -266,35 +106,33 @@
   </div>
 </div>
 
-<div class="edition-bar">
-  <button class="edition-tab active" data-filter="all">All Topics</button>
-  <button class="edition-tab" data-filter="pub">Publications</button>
-  <button class="edition-tab" data-filter="china">China</button>
-  <button class="edition-tab" data-filter="us">US Regulatory</button>
-  <button class="edition-tab" data-filter="global">Global</button>
-  <button class="edition-tab" data-filter="legal">Legal</button>
+<div class="tabs">
+  <button class="tab active" data-filter="all">All Topics</button>
+  <button class="tab" data-filter="pub">Publications</button>
+  <button class="tab" data-filter="china">China</button>
+  <button class="tab" data-filter="us">US Regulatory</button>
+  <button class="tab" data-filter="global">Global</button>
+  <button class="tab" data-filter="legal">Legal</button>
 </div>
 
 <div class="container">
   <div class="grid" id="grid"></div>
   <div class="footer">
-    <div class="footer-note">Powered by Claude AI · Refreshes on load · <span id="article-count">—</span> headlines</div>
+    <div class="footer-note">Google News RSS · Refreshes on load · <span id="article-count">—</span> headlines</div>
     <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
   </div>
 </div>
 
 <script>
-const TOPICS = [
-  // NEWS SOURCES
-  { id:'src1', category:'pub', label:'Bloomberg & Reuters',       query:'Bloomberg Reuters cross-border payments fintech news 2026' },
-  { id:'src2', category:'pub', label:'Payments Dive & Am. Banker',query:'payments banking fintech regulation news 2026' },
-  { id:'src3', category:'pub', label:'The Paypers & a16z',        query:'fintech payments cross-border innovation news 2026' },
-  { id:'src4', category:'pub', label:'Fed, CFPB, FinCEN, OCC',    query:'Federal Reserve CFPB FinCEN OCC payments enforcement 2026' },
-  // TOPIC SECTIONS
-  { id:'china', category:'china', label:'China — SAFE, PBoC, CIPS, RMB', query:'China SAFE PBoC CIPS RMB cross-border payment regulation 2026' },
-  { id:'us',    category:'us',    label:'US Regulatory — OFAC, FinCEN, CFPB', query:'OFAC FinCEN CFPB sanctions AML remittance enforcement 2026' },
-  { id:'global',category:'global',label:'Global — G20, SWIFT, CBDC',     query:'G20 SWIFT ISO20022 CBDC mBridge cross-border payment 2026' },
-  { id:'legal', category:'legal', label:'Legal & Compliance',             query:'cross-border payment legal compliance enforcement lawsuit 2026' },
+const SECTIONS = [
+  { id:'bloomberg_reuters', category:'pub',    label:'Bloomberg & Reuters' },
+  { id:'payments_banking',  category:'pub',    label:'Payments Dive & Am. Banker' },
+  { id:'paypers_a16z',      category:'pub',    label:'The Paypers & a16z' },
+  { id:'regulators',        category:'pub',    label:'Fed, CFPB, FinCEN, OCC' },
+  { id:'china',             category:'china',  label:'China — SAFE, PBoC, CIPS, RMB' },
+  { id:'us_regulatory',     category:'us',     label:'US — OFAC, FinCEN, CFPB' },
+  { id:'global',            category:'global', label:'Global — G20, SWIFT, CBDC' },
+  { id:'legal',             category:'legal',  label:'Legal & Compliance' },
 ];
 
 function timeAgo(dateStr) {
@@ -307,17 +145,17 @@ function timeAgo(dateStr) {
   return `${Math.floor(diff/1440)}d ago`;
 }
 
-function buildSection(topic) {
+function buildSection(s) {
   const el = document.createElement('div');
   el.className = 'section visible';
-  el.dataset.category = topic.category;
+  el.dataset.category = s.category;
   el.innerHTML = `
     <div class="section-head">
-      <span class="section-label ${topic.category}">${topic.label}</span>
-      <span class="section-dot ${topic.category}"></span>
+      <span class="section-label ${s.category}">${s.label}</span>
+      <span class="dot ${s.category}"></span>
     </div>
-    <div id="articles-${topic.id}">
-      <div class="loading">Fetching<span class="spinner"></span></div>
+    <div id="articles-${s.id}">
+      <div class="loading">Loading<span class="spinner"></span></div>
     </div>`;
   return el;
 }
@@ -326,48 +164,35 @@ function renderArticles(id, items) {
   const el = document.getElementById(`articles-${id}`);
   if (!items || !items.length) {
     el.innerHTML = '<div class="empty">No recent articles found</div>';
-    return;
+    return 0;
   }
-  el.innerHTML = items.slice(0, 4).map(item => `
-    <a class="article" href="${item.url || '#'}" target="_blank" rel="noopener">
-      <div class="article-title">${item.title || 'Untitled'}</div>
+  el.innerHTML = items.map(item => `
+    <a class="article" href="${item.url}" target="_blank" rel="noopener">
+      <div class="article-title">${item.title}</div>
       <div class="article-meta">
-        <span class="article-source">${item.source || ''}</span>
+        <span class="article-source">${item.source}</span>
         <span class="article-time">${timeAgo(item.date)}</span>
       </div>
     </a>`).join('');
+  return items.length;
 }
 
-async function fetchTopic(topic, retries = 2) {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch('/api/news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: topic.query, label: topic.label })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const items = await res.json();
-      if (items && items.length > 0) {
-        renderArticles(topic.id, items);
-        return items.length;
-      }
-      // Got empty array — retry
-      if (attempt < retries) await sleep(1000);
-    } catch(e) {
-      if (attempt < retries) await sleep(1500);
-    }
+async function fetchSection(s) {
+  try {
+    const res = await fetch(`/api/news?feed=${s.id}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const items = await res.json();
+    return renderArticles(s.id, items);
+  } catch(e) {
+    const el = document.getElementById(`articles-${s.id}`);
+    if (el) el.innerHTML = '<div class="empty">Could not load</div>';
+    return 0;
   }
-  const el = document.getElementById(`articles-${topic.id}`);
-  if (el) el.innerHTML = '<div class="empty">No recent articles found</div>';
-  return 0;
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-document.querySelectorAll('.edition-tab').forEach(tab => {
+document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
-    document.querySelectorAll('.edition-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     const f = tab.dataset.filter;
     document.querySelectorAll('.section').forEach(s => {
@@ -378,22 +203,18 @@ document.querySelectorAll('.edition-tab').forEach(tab => {
 
 async function init() {
   const now = new Date();
-  document.getElementById('today-date').textContent = now.toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('today-day').textContent = now.toLocaleDateString('en-US', { weekday:'long' });
+  document.getElementById('today-date').textContent = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('today-day').textContent = now.toLocaleDateString('en-US', {weekday:'long'});
 
   const grid = document.getElementById('grid');
-  TOPICS.forEach(t => grid.appendChild(buildSection(t)));
+  SECTIONS.forEach(s => grid.appendChild(buildSection(s)));
 
-  // Fetch one at a time with a small delay between each to avoid overwhelming the API
-  let total = 0;
-  for (const topic of TOPICS) {
-    const count = await fetchTopic(topic);
-    total += count;
-    document.getElementById('article-count').textContent = `${total} headlines`;
-    await sleep(500);
-  }
+  // Fetch all sections in parallel — RSS is fast
+  const counts = await Promise.all(SECTIONS.map(fetchSection));
+  const total = counts.reduce((a,b) => a+b, 0);
 
-  document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })}`;
+  document.getElementById('article-count').textContent = `${total} headlines`;
+  document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})}`;
 }
 
 init();
