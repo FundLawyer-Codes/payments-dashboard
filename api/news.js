@@ -7,12 +7,12 @@ const corsHeaders = {
 };
 
 const FEEDS = {
-  china:      'https://news.google.com/rss/search?q=China+SAFE+PBoC+CIPS+RMB+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en',
-  us:         'https://news.google.com/rss/search?q=OFAC+FinCEN+CFPB+sanctions+AML+remittance+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
-  global:     'https://news.google.com/rss/search?q=G20+SWIFT+ISO20022+CBDC+mBridge+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
-  industry:   'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry+market&hl=en-US&gl=US&ceid=US:en',
-  enforcement:'https://news.google.com/rss/search?q=payments+fintech+enforcement+penalty+lawsuit+compliance&hl=en-US&gl=US&ceid=US:en',
-  regulators: 'https://news.google.com/rss/search?q="Federal+Reserve"+CFPB+FinCEN+OCC+HKMA+MAS+payments+regulation&hl=en-US&gl=US&ceid=US:en',
+  china:       'https://news.google.com/rss/search?q=China+SAFE+PBoC+CIPS+RMB+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en',
+  us:          'https://news.google.com/rss/search?q=OFAC+sanctions+cross-border+payment+OR+FinCEN+AML+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
+  global:      'https://news.google.com/rss/search?q=G20+SWIFT+ISO+20022+CBDC+mBridge+cross-border+payment&hl=en-US&gl=US&ceid=US:en',
+  industry:    'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry+market&hl=en-US&gl=US&ceid=US:en',
+  enforcement: 'https://news.google.com/rss/search?q=payments+fintech+enforcement+penalty+lawsuit+compliance&hl=en-US&gl=US&ceid=US:en',
+  regulators:  'https://news.google.com/rss/search?q=Federal+Reserve+payments+OR+CFPB+payments+OR+FinCEN+payments+OR+OCC+bank+OR+MAS+payments&hl=en-US&gl=US&ceid=US:en',
 };
 
 function parseRSS(xml) {
