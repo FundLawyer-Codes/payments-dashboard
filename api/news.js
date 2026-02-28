@@ -6,14 +6,33 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+// Each feed can have one or two URLs — for China we fetch both EN and ZH
 const FEEDS = {
-  china:       'https://news.google.com/rss/search?q=China+SAFE+PBoC+CIPS+RMB+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  us:          'https://news.google.com/rss/search?q=OFAC+sanctions+cross-border+payment+OR+FinCEN+AML+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  global:      'https://news.google.com/rss/search?q=G20+SWIFT+ISO+20022+CBDC+mBridge+cross-border+payment&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  industry:    'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry+market&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  enforcement: 'https://news.google.com/rss/search?q=payments+fintech+enforcement+penalty+lawsuit+compliance&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  regulators:  'https://news.google.com/rss/search?q=Federal+Reserve+payments+OR+CFPB+payments+OR+FinCEN+payments+OR+OCC+bank+OR+MAS+payments&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
-  chinareports:'https://news.google.com/rss/search?q=China+fintech+payment+legal+report+OR+IFLR+China+fintech+OR+law+firm+China+payment+regulation&hl=en-US&gl=US&ceid=US:en&tbs=qdr:m',
+  china: [
+    'https://news.google.com/rss/search?q=China+cross-border+payment+regulation&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E8%B7%A8%E5%A2%83%E6%94%AF%E4%BB%98&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E4%BA%BA%E6%B0%91%E9%93%B6%E8%A1%8C+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+    'https://news.google.com/rss/search?q=%E5%A4%96%E6%B1%87%E7%AE%A1%E7%90%86%E5%B1%80+%E6%94%AF%E4%BB%98%E6%9C%BA%E6%9E%84&hl=zh-CN&gl=CN&ceid=CN:zh-Hans',
+  ],
+  us: [
+    'https://news.google.com/rss/search?q=OFAC+cross-border+payment+OR+FinCEN+payment+OR+CFPB+remittance&hl=en-US&gl=US&ceid=US:en',
+  ],
+  global: [
+    'https://news.google.com/rss/search?q=SWIFT+cross-border+payment+OR+CBDC+cross-border+OR+G20+payments&hl=en-US&gl=US&ceid=US:en',
+  ],
+  industry: [
+    'https://news.google.com/rss/search?q=cross-border+payments+fintech+industry&hl=en-US&gl=US&ceid=US:en',
+  ],
+  enforcement: [
+    'https://news.google.com/rss/search?q=fintech+payment+enforcement+OR+payment+penalty+OR+payment+lawsuit&hl=en-US&gl=US&ceid=US:en',
+  ],
+  chinareports: [
+    'https://news.google.com/rss/search?q=IFLR+China+payment+OR+Fangda+fintech+OR+Han+Kun+fintech+OR+JunHe+payment+OR+King+Wood+Mallesons+payment&hl=en-US&gl=US&ceid=US:en',
+    'https://news.google.com/rss/search?q=Cooley+payment+OR+Latham+Watkins+payment+OR+Debevoise+payment+OR+Morrison+Foerster+fintech+OR+Covington+payment+OR+Davis+Polk+payment&hl=en-US&gl=US&ceid=US:en',
+  ],
+  regulators: [
+    'https://news.google.com/rss/search?q=Federal+Reserve+payment+OR+CFPB+payment+OR+FinCEN+enforcement+OR+MAS+payment&hl=en-US&gl=US&ceid=US:en',
+  ],
 };
 
 function parseRSS(xml) {
@@ -28,7 +47,6 @@ function parseRSS(xml) {
     const date   = (item.match(/<pubDate>(.*?)<\/pubDate>/))?.[1] || '';
     const source = (item.match(/<source[^>]*>(.*?)<\/source>/))?.[1] || 'Google News';
     if (!title || !url) continue;
-    // Filter out articles older than 30 days
     if (date) {
       const pubTime = new Date(date).getTime();
       if (!isNaN(pubTime) && pubTime < thirtyDaysAgo) continue;
@@ -40,7 +58,7 @@ function parseRSS(xml) {
       date: date ? new Date(date).toISOString().split('T')[0] : '',
     });
   }
-  return items.slice(0, 5);
+  return items;
 }
 
 export default async function handler(req, res) {
@@ -48,16 +66,32 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { feed } = req.query;
-  const feedUrl = FEEDS[feed];
-  if (!feedUrl) return res.status(400).json({ error: 'Unknown feed' });
+  const feedUrls = FEEDS[feed];
+  if (!feedUrls) return res.status(400).json({ error: 'Unknown feed' });
 
   try {
-    const response = await fetch(feedUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' }
+    // Fetch all URLs for this feed in parallel
+    const responses = await Promise.all(
+      feedUrls.map(url =>
+        fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)' } })
+          .then(r => r.text())
+          .catch(() => '')
+      )
+    );
+
+    // Parse and merge, deduplicate by title, sort by date, take top 5
+    const allItems = responses.flatMap(xml => parseRSS(xml));
+    const seen = new Set();
+    const unique = allItems.filter(item => {
+      const key = item.title.slice(0, 60);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
-    const xml = await response.text();
-    const items = parseRSS(xml);
-    console.log(`[${feed}] fetched ${items.length} items`);
+    unique.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const items = unique.slice(0, 5);
+
+    console.log(`[${feed}] fetched ${items.length} items from ${feedUrls.length} feeds`);
     return res.status(200).json(items);
   } catch (e) {
     console.error(`[${feed}] error:`, e.message);
