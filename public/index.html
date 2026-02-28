@@ -346,22 +346,32 @@ function renderArticles(id, items) {
     </a>`).join('');
 }
 
-async function fetchTopic(topic) {
-  try {
-    const res = await fetch('/api/news', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: topic.query })
-    });
-    const items = await res.json();
-    renderArticles(topic.id, items);
-    return items.length;
-  } catch(e) {
-    const el = document.getElementById(`articles-${topic.id}`);
-    if (el) el.innerHTML = '<div class="empty">Could not load</div>';
-    return 0;
+async function fetchTopic(topic, retries = 2) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch('/api/news', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: topic.query })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const items = await res.json();
+      if (items && items.length > 0) {
+        renderArticles(topic.id, items);
+        return items.length;
+      }
+      // Got empty array — retry
+      if (attempt < retries) await sleep(1000);
+    } catch(e) {
+      if (attempt < retries) await sleep(1500);
+    }
   }
+  const el = document.getElementById(`articles-${topic.id}`);
+  if (el) el.innerHTML = '<div class="empty">No recent articles found</div>';
+  return 0;
 }
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 document.querySelectorAll('.edition-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -382,18 +392,17 @@ async function init() {
   const grid = document.getElementById('grid');
   TOPICS.forEach(t => grid.appendChild(buildSection(t)));
 
+  // Fetch one at a time with a small delay between each to avoid overwhelming the API
   let total = 0;
-  for (let i = 0; i < TOPICS.length; i += 3) {
-    const batch = TOPICS.slice(i, i + 3);
-    const counts = await Promise.all(batch.map(fetchTopic));
-    total += counts.reduce((a,b) => a+b, 0);
+  for (const topic of TOPICS) {
+    const count = await fetchTopic(topic);
+    total += count;
+    document.getElementById('article-count').textContent = `${total} headlines`;
+    await sleep(500);
   }
 
-  document.getElementById('article-count').textContent = `${total} headlines`;
   document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' })}`;
 }
-
-init();
 </script>
 </body>
 </html>
